@@ -290,7 +290,10 @@ function mainProcess()
 					
 					// add fees 
 					
-					this.rentalLicRenFee_RL01();
+					//rentalLicRenFee_RL01();
+					var ,dwellingUnitFee=20,roomingUnitFee=10,buildingUnitFee=25,dwellingUnits=Number(AInfo["Number of Dwelling Units"]),roomingUnits=Number(AInfo["Number of Rooming Units"]),,buildingUnits=Number(AInfo["Number of Building Units"]),ownerUnits=Number(AInfo["Number of Owner Occupied Units or Units Not Available for Rent"]),totalFee=0;
+					
+					totalFee=(((buildingUnitFee*buildingUnits)+(dwellingUnitFee*dwellingUnits)+(roomingUnitFee*roomingUnits))-(ownerUnits*20)),totalFee=parseFloat(totalFee).toFixed()
 					
 					//if (feeList.length > 0) {
 					//		for (var fe in feeList.split(","))
