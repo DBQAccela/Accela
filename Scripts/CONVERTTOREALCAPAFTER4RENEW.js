@@ -30,7 +30,6 @@ if (result.getSuccess())
 	aa.print("CAP(" + parentLicenseCAPID + ") renewal is complete.");
 }
 aa.env.setValue("ScriptReturnCode", "0"); 
-aa.env.setValue("ScriptReturnMessage", "Renewal process.");
 aa.env.setValue("ScriptReturnMessage", "Running CONVERTTOREALCAPAFTER4RENEW.");
 
 function copyKeyInfo(srcCapId, targetCapId)
@@ -103,6 +102,7 @@ function copyAppSpecificInfo(srcCapId, targetCapId)
 {
 	//1. Get Application Specific Information with source CAPID.
 	var  appSpecificInfo = getAppSpecificInfo(srcCapId);
+	aa.print("(copyAppSpecificInfo) appSpecificInfo = " + appSpecificInfo);
 	if (appSpecificInfo == null || appSpecificInfo.length == 0)
 	{
 		return;
