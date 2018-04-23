@@ -31,7 +31,7 @@ if (result.getSuccess())
 }
 aa.env.setValue("ScriptReturnCode", "0"); 
 aa.env.setValue("ScriptReturnMessage", "Running CONVERTTOREALCAPAFTER4RENEW.");
-logDebug("CONVERTTOREALCAPAFTER4RENEW running");
+
 
 function copyKeyInfo(srcCapId, targetCapId)
 {
@@ -73,8 +73,6 @@ function copyRenewCapDocument(srcCapId, targetCapId,currentUserID)
 	}
 }
 
-
-
 function copyEducation(srcCapId, targetCapId)
 {
 	if(srcCapId != null && targetCapId != null)
@@ -103,7 +101,6 @@ function copyAppSpecificInfo(srcCapId, targetCapId)
 {
 	//1. Get Application Specific Information with source CAPID.
 	var  appSpecificInfo = getAppSpecificInfo(srcCapId);
-	logDebug("(copyAppSpecificInfo) appSpecificInfo = " + appSpecificInfo);
 	if (appSpecificInfo == null || appSpecificInfo.length == 0)
 	{
 		return;
@@ -809,7 +806,7 @@ function getAdditionalInfo(capId)
 	return bvaluatnScriptModel;
 }
 
-function getCapDetailByID(capId)
+function  (capId)
 {
 	capDetailScriptModel = null;
 	var s_result = aa.cap.getCapDetail(capId);

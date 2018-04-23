@@ -1,0 +1,97 @@
+
+Time 	Event 	Message
+05:57:36 PM 	ConvertToRealCAPAfter 	EMSE Script Framework Versions
+EVENT TRIGGERED: ConvertToRealCAPAfter
+SCRIPT EXECUTED: CONVERTTOREALCAPAFTERNEW
+INCLUDE VERSION: 3.1.28
+SCRIPT VERSION : 2
+GLOBAL VERSION : 3
+ASI Table Array : UNITS (2 Rows)
+**WARNING: getting project parents: Project Parents Not Found: record ID: DUBUQUE-REC18-00000
+EMSE Script Results for RLR18-0050
+capId = class com.accela.aa.aamain.cap.CapIDModel
+cap = class com.accela.aa.emse.dom.CapScriptModel
+currentUserID = ADMIN
+currentUserGroup = LicensesAdmin
+systemUserObj = class com.accela.aa.aamain.people.SysUserModel
+appTypeString = Licenses/Business/Rental License/Renewal
+capName = undefined
+capStatus = Pending
+fileDate = 4/19/2018
+fileDateYYYYMMDD = 2018-04-19
+sysDate = class com.accela.aa.emse.util.ScriptDateTime
+parcelArea = 07249.89
+estValue = 0
+calcValue = 0
+feeFactor = CONT
+houseCount = 0
+feesInvoicedTotal = 0
+balanceDue = 0
+parentCapId = null
+lookup(EMSE_VARIABLE_BRANCH_PREFIX,ConvertToRealCAPAfter) = CTRCA
+Executing : PreExecuteForAfterEvents, Elapsed Time: 0.078 Seconds
+Finished: PreExecuteForAfterEvents, Elapsed Time: 0.078 Seconds
+{Type of Dwelling} = Duplex
+{Number of Buildings} = 1
+{Number of Dwelling Units} = 2
+{Number of Rooming Units} = 0
+{Number of Owner Occupied Units or Units Not Available for Rent} = 0
+{Have you attended the required Landlord Education Course?} = No
+{Is this a Dormitory?} = No
+{Next Required Inspection Date} = 10/13/2022
+{Verified Renewal Info Matches Application} = null
+{Building Description} = null
+{Application Fee Total} = 68.00
+{Number of Vacant Units} = null
+{Would you consider renting to a qualified tenant with a Section 8 / Housing Choice Voucher?} = No
+{Would you like more information about the Section 8 / Housing Choice Voucher program?} = No
+{ParcelAttribute.ASSESSED BUILDING} = null
+{ParcelAttribute.ASSESSED DWELLING} = null
+{ParcelAttribute.ASSESSED LAND} = null
+{ParcelAttribute.ASSESSED TOTAL} = null
+{ParcelAttribute.LNCOMMENTS} = null
+{ParcelAttribute.LOCK} = null
+{ParcelAttribute.HISTORIC PRESERVATION} = null
+{ParcelAttribute.TAX YEAR} = null
+{ParcelAttribute.CLASS} = null
+{ParcelAttribute.TIF} = null
+{ParcelAttribute.BUILDING VALUE} = null
+{ParcelAttribute.DWELLING VALUE} = null
+{ParcelAttribute.TOTAL VALUE} = null
+{ParcelAttribute.Block} = null
+{ParcelAttribute.Book} = null
+{ParcelAttribute.CensusTract} = 000702
+{ParcelAttribute.CouncilDistrict} = null
+{ParcelAttribute.ExemptValue} = 0.0
+{ParcelAttribute.ImprovedValue} = 0.0
+{ParcelAttribute.InspectionDistrict} = null
+{ParcelAttribute.LandValue} = 7920.0
+{ParcelAttribute.LegalDesc} = E 10' LOT 4, LOT 5 & W 12.5' OF LOT 6 ALL IN PROSPECT HILL ADD 633-635 W 3RD ST
+{ParcelAttribute.Lot} = null
+{ParcelAttribute.MapNo} = null
+{ParcelAttribute.MapRef} = null
+{ParcelAttribute.ParcelStatus} = null
+{ParcelAttribute.SupervisorDistrict} = null
+{ParcelAttribute.Tract} = null
+{ParcelAttribute.PlanArea} = null
+Executing : ConvertToRealCAPAfter, Elapsed Time: 0.078 Seconds
+Executing : CTRCA:Licenses/*/*/*, Elapsed Time: 0.078 Seconds
+Executing : EMSE:SetContactRelationshipToContactType, Elapsed Time: 0.078 Seconds
+Finished: EMSE:SetContactRelationshipToContactType, Elapsed Time: 0.078 Seconds
+Finished: CTRCA:Licenses/*/*/*, Elapsed Time: 0.094 Seconds
+Executing : CTRCA:Licenses/Business/*/*, Elapsed Time: 0.094 Seconds
+Finished: CTRCA:Licenses/Business/*/*, Elapsed Time: 0.094 Seconds
+Executing : CTRCA:Licenses/Business/Rental License/*, Elapsed Time: 0.109 Seconds
+Finished: CTRCA:Licenses/Business/Rental License/*, Elapsed Time: 0.109 Seconds
+Executing : CTRCA:Licenses/*/*/Renewal, Elapsed Time: 0.109 Seconds
+**ERROR An error occured in the following standard choice CTRCA:Licenses/*/*/Renewal#01 Error: com.accela.aa.emse.util.AAScriptSyntaxException: ReferenceError: "logDebug" is not defined. (script#48(eval)#21(eval)#1)
+Finished: CTRCA:Licenses/*/*/Renewal, Elapsed Time: 0.265 Seconds
+Executing : CTRCA:Licenses/Business/*/Renewal, Elapsed Time: 0.265 Seconds
+Finished: CTRCA:Licenses/Business/*/Renewal, Elapsed Time: 0.265 Seconds
+Executing : CTRCA:Licenses/Business/Rental License/Renewal, Elapsed Time: 0.265 Seconds
+The assessed fee Sequence Number 29567984
+Finished: CTRCA:Licenses/Business/Rental License/Renewal, Elapsed Time: 0.297 Seconds
+Finished: ConvertToRealCAPAfter, Elapsed Time: 0.297 Seconds
+lookup(EMSE_VARIABLE_BRANCH_PREFIX,ConvertToRealCAPAfter) = CTRCA
+Script  CONVERTTOREALCAPAFTERNEW
+
