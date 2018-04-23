@@ -31,6 +31,7 @@ if (result.getSuccess())
 }
 aa.env.setValue("ScriptReturnCode", "0"); 
 aa.env.setValue("ScriptReturnMessage", "Running CONVERTTOREALCAPAFTER4RENEW.");
+logDebug("CONVERTTOREALCAPAFTER4RENEW running");
 
 function copyKeyInfo(srcCapId, targetCapId)
 {
@@ -102,7 +103,7 @@ function copyAppSpecificInfo(srcCapId, targetCapId)
 {
 	//1. Get Application Specific Information with source CAPID.
 	var  appSpecificInfo = getAppSpecificInfo(srcCapId);
-	aa.print("(copyAppSpecificInfo) appSpecificInfo = " + appSpecificInfo);
+	logDebug("(copyAppSpecificInfo) appSpecificInfo = " + appSpecificInfo);
 	if (appSpecificInfo == null || appSpecificInfo.length == 0)
 	{
 		return;
