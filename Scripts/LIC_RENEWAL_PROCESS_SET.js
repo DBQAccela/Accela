@@ -290,7 +290,7 @@ function mainProcess()
 					
 					// add fees 
 					
-					root.rentalLicRenFee_RL01();
+					rentalLicRenFee_RL01();
 					
 					//if (feeList.length > 0) {
 					//		for (var fe in feeList.split(","))
