@@ -333,47 +333,12 @@ function bldScriptBLD_07addHistPropCond(){
 function bldScript_06addAddressLockCond(){
 	logDebug("bldScript_06addAddressLockCond() started.");
 	try{
-		var conditionType="Building Permit",
-			conditionName="Parcel Lock",
-			impactCode="",
-			condStatus="Applied",
-			auditStatus="A",
-			displayNotice="Y",
-			parcelAttr=new Array;
+		var conditionType="Building Permit",conditionName="Parcel Lock",impactCode="",condStatus="Applied",auditStatus="A",displayNotice="Y",parcelAttr=new Array;
 		loadParcelAttributes(parcelAttr);
 		var newCondModel=aa.capCondition.getNewConditionScriptModel().getOutput();
-		newCondModel.setCapID(capId),
-			newCondModel.setConditionType(conditionType),
-			newCondModel.setConditionStatus(condStatus),
-			newCondModel.setEffectDate(sysDate),
-			newCondModel.setIssuedDate(sysDate),
-			newCondModel.setIssuedByUser(systemUserObj),
-			newCondModel.setStatusByUser(systemUserObj),
-			newCondModel.setAuditID(currentUserID),
-			newCondModel.setAuditStatus(auditStatus),
-		var lockOrNotice=parcelAttr["ParcelAttribute.LOCK"],
-			newCondModel.setDisplayConditionNotice(displayNotice);
-			conditionComments=parcelAttr["ParcelAttribute.LNCOMMENTS"];
-		void 0!=lockOrNotice?(
-			appMatch("Building/Right of Way/NA/NA")||(logDebug("For a license or building permit"),
-			"L"==lockOrNotice.toUpperCase()?impactCode="Lock":"N"==lockOrNotice.toUpperCase()&&(impactCode="Notice"),
-			matches(lockOrNotice,"L","N")&&(logDebug("Lock or Notice: "+lockOrNotice),
-			newCondModel.setConditionDescription(conditionName),
-			newCondModel.setLongDescripton(conditionComments),
-			newCondModel.setImpactCode(impactCode),
-			aa.capCondition.createCapCondition(newCondModel))),
-			appMatch("Building/Right of Way/NA/NA")&&(
-				logDebug("For right of way permit"),
-				matches(lockOrNotice,"L","N")&&(
-					logDebug("Lock or Notice: "+lockOrNotice),
-					impactCode="Notice",
-					newCondModel.setConditionDescription(conditionName),
-					newCondModel.setLongDescripton(conditionComments),
-					newCondModel.setImpactCode(impactCode),
-					aa.capCondition.createCapCondition(newCondModel)
-				)
-			)
-		):logDebug("WARNING: Parcel Attribute Lock Or Notice is undefined")
+		newCondModel.setCapID(capId),newCondModel.setConditionType(conditionType),newCondModel.setConditionStatus(condStatus),newCondModel.setEffectDate(sysDate),newCondModel.setIssuedDate(sysDate),newCondModel.setIssuedByUser(systemUserObj),newCondModel.setStatusByUser(systemUserObj),newCondModel.setAuditID(currentUserID),newCondModel.setAuditStatus(auditStatus),newCondModel.setDisplayConditionNotice(displayNotice);
+		var lockOrNotice=parcelAttr["ParcelAttribute.LOCK"],conditionComments=parcelAttr["ParcelAttribute.LNCOMMENTS"];
+		void 0!=lockOrNotice?(appMatch("Building/Right of Way/NA/NA")||(logDebug("For a license or building permit"),"L"==lockOrNotice.toUpperCase()?impactCode="Lock":"N"==lockOrNotice.toUpperCase()&&(impactCode="Notice"),matches(lockOrNotice,"L","N")&&(logDebug("Lock or Notice: "+lockOrNotice),newCondModel.setConditionDescription(conditionName),newCondModel.setLongDescripton(conditionComments),newCondModel.setImpactCode(impactCode),aa.capCondition.createCapCondition(newCondModel))),appMatch("Building/Right of Way/NA/NA")&&(logDebug("For right of way permit"),matches(lockOrNotice,"L","N")&&(logDebug("Lock or Notice: "+lockOrNotice),impactCode="Notice",newCondModel.setConditionDescription(conditionName),newCondModel.setLongDescripton(conditionComments),newCondModel.setImpactCode(impactCode),aa.capCondition.createCapCondition(newCondModel)))):logDebug("WARNING: Parcel Attribute Lock Or Notice is undefined")
 	}
 	catch(err){showMessage=!0,comment("Error on custom function bldScript_06addAddressLockCond(). Err: "+err)}
 }
@@ -388,28 +353,108 @@ var scriptRoot=this,bs=bs||{};
 	batch=root.batch={};
 	(function(){
 		var root=this;
+		// Byrne's Rental License Renewal, Step 1, run from a batch script
+		// Compiles records within specified expiration range into recs[] 
 		root.RenewalRecord_RL_06=function(){
-			var idx,lic,scriptDate,dte,$iTrc=bs.utils.debug.ifTracer,$utils=bs.utils,beginDate=new Date((new Date).getFullYear()+1,0,1),endDate=new Date((new Date).getFullYear()+1,0,31),recs=[],recsL=[],recsR=[],br="<BR />";recsL=aa.cap.getByAppType("Licenses","Business","Rental License","License").getOutput(),recsR=aa.cap.getByAppType("Licenses","Business","Rental License","Renewals").getOutput(),recs=recsR.concat(recsL);
-			for(var idx in recs)
-				if(matches(recs[idx].capStatus,"Active")&&convertDate(recs[idx].getFileDate())>$utils.date.dateAdd("d",-390,new Date)&&(lic=aa.expiration.getLicensesByCapID(recs[idx].capID).getOutput()))
-					try{
-						if(lic.getExpDate&&lic.getExpDate()&&(scriptDate=lic.getExpDate(),dte=new Date(scriptDate.getMonth()+"/"+scriptDate.getDayOfMonth()+"/"+scriptDate.getYear()),aa.print("Record - "+recs[idx].capID.getCustomID()+"---- Exp date - "+dte),$iTrc(dte>=beginDate&&dte<=endDate,recs[idx].capID.getCustomID()+" has a expiration date within range"+br)))
-							try{
-								if(aa.print("passed all tests"+br),lic.setExpStatus("About to Expire"),aa.expiration.editB1Expiration(lic.getB1Expiration()),aa.print("going to update task"+br),aa.print("recs[idx].capID: "+recs[idx].capID+br),updateTask("License Status","About to Expire","Updated via Batch RL_06","","",recs[idx].capID),aa.env.setValue("ParentCapID",recs[idx].capID),aa.print("calling dans script"+br),aa.print("Calling code for renewal"),renewCapId=createCap("Licenses/Business/Rental License/Renewal","Rental License Renewal"),renewCapId)
-									if(renewLinkResult=aa.cap.createRenewalCap(recs[idx].capID,renewCapId,!1),renewLinkResult){
-										aa.print("Yes, created the complete renewal: "+renewCapId.getCustomID()+br),copyASIFields(recs[idx].capID,renewCapId),copyASITables(recs[idx].capID,renewCapId),copyAddresses(recs[idx].capID,renewCapId),copyContacts(recs[idx].capID,renewCapId),copyOwner(recs[idx].capID,renewCapId),copyParcels(recs[idx].capID,renewCapId);
-										var AInfo=new Array;
-										loadAppSpecific(AInfo,renewCapId);
-										var feeMonths,dwellingUnitFee=20,roomingUnitFee=10,dwellingUnits=Number(AInfo["Number of Dwelling Units"]),roomingUnits=Number(AInfo["Number of Rooming Units"]),totalFee=0;
-										feeMonths=$utils.date.monthsDiff(new Date,new Date((new Date).getFullYear()+1,0,1))+1,aa.print("feeMonths: "+feeMonths+br),totalFee=25+dwellingUnitFee*dwellingUnits+roomingUnitFee*roomingUnits,totalFee=parseFloat(totalFee).toFixed(),aa.print("totalFee: "+totalFee+br),feeSeq=addFee("LIC_RA_01","LIC_RENT","FINAL",totalFee,"Y",renewCapId)
-									}
-									else aa.print("unable to link the renewed cap to the license"+br);
-								else aa.print("Unable to create renewal cap"+br);aa.print("SUCCESS")
-							}
-							catch(ex){aa.print(ex.message)}
-					}
-					catch(ex){aa.print(recs[idx].capID.getCustomID()+" has no renewal info"+br)}
+			
+    var idx,
+        lic,
+        recs = [],
+        scriptDate,
+        dte,
+        br = "<BR />";							// Break Tag;
+    
+    var emptyGISArray = [];
+	var emptyCm1 = aa.cap.getCapModel().getOutput();
+    var emptyCt1 = emptyCm1.getCapType();
+    emptyCt1.setGroup("Licenses");
+    emptyCt1.setType("Business");
+    emptyCt1.setSubType("Rental License");
+    emptyCt1.setCategory("License");
+    emptyCm1.setCapType(emptyCt1);
+    emptyCm1.setCapStatus("Active");
+    var capModel = emptyCm1;
+	
+    var recsResult = aa.cap.getCapListByCollection(capModel, null, null, null, null, null, emptyGISArray);
+	
+	if(recsResult.getSuccess()) recs = recsResult.getOutput();
+    else aa.print("Unable to get licenses err: " + recsResult.getErrorMessage() + br);
+	
+	var newExpDate = new Date(new Date().getFullYear() + 1, 0, 1);
+    var newExpDateString = newExpDate.getMonth()+1 + '/' + newExpDate.getDate() + '/' + newExpDate.getFullYear();
+	var expAADate = aa.date.parseDate(newExpDateString);
+	
+    for (var idx in recs) {
+        lic = aa.expiration.getLicensesByCapID(recs[idx].capID).getOutput();
+
+        if (lic) {
+            try {
+                if (lic.getExpDate()) {
+                    scriptDate = lic.getExpDate();
+                    dte = new Date(scriptDate.getMonth() + "/" + scriptDate.getDayOfMonth() + "/" + scriptDate.getYear());
+                    aa.print("Record - " + recs[idx].capID.getCustomID() + '---- Exp date - ' + dte + br);
+
+					//if(recs[idx].capID.getCustomID() != 'RL18-0010') continue;
+                    aa.print('passed all tests' + br);
+                    lic.setExpStatus("About to Expire");
+					lic.setExpDate(expAADate);
+                    aa.expiration.editB1Expiration(lic.getB1Expiration());
+                    aa.print('going to update task' + br);
+                    aa.print("recs[idx].capID: " + recs[idx].capID + br);
+                    updateTask("License Status", "About to Expire", "Updated via Batch RL_06", "", "", recs[idx].capID);
+                    
+                    // add renewal record
+                    aa.print('Calling code for renewal' + br);
+                    //First we create a Rental License Renewal
+                    renewCapId = createCap("Licenses/Business/Rental License/Renewal", "Rental License Renewal");
+                    
+                    //If created Successfully
+                    if (renewCapId) {
+                        //Then we associate the created record to the license
+                        renewLinkResult = aa.cap.createRenewalCap(recs[idx].capID, renewCapId, false);
+                        
+                        if (renewLinkResult) {
+                            aa.print("Yes, created the complete renewal: " + renewCapId.getCustomID() + br);
+                            //Since the renewal was not creating using the createRenewalRecord we need to copy ASI and ASITs from License to Renewal
+                            copyASIFields(recs[idx].capID, renewCapId);
+                            copyASITables(recs[idx].capID, renewCapId);
+                            copyAddresses(recs[idx].capID, renewCapId);
+                            copyContacts(recs[idx].capID, renewCapId);
+                            copyOwner(recs[idx].capID, renewCapId);
+                            copyParcels(recs[idx].capID, renewCapId);
+                    
+                            //Adding the fee manually for some reason it is not working here when calling function above
+                            // and don't want to break the function since it's working for other records
+                            var AInfo = new Array(); // Create array for tokenized variables
+                            loadAppSpecific(AInfo, renewCapId); // Add AppSpecific Info
+                    
+                            var buildings = Number(AInfo['Number of Buildings']),
+                            dwellingUnits = Number(AInfo['Number of Dwelling Units']),
+                            roomingUnits = Number(AInfo['Number of Rooming Units']),
+							occupUnits = Number(AInfo['Number of Owner Occupied Units or Units Not Available for Rent']),
+                            totalFee = 0;
+							
+                            totalFee = ((25 * buildings) + (20 * dwellingUnits) + (10 * roomingUnits)) - (20 * occupUnits);
+                            totalFee = parseFloat(totalFee).toFixed(); //removed Fixed nbr to round
+                    
+                            aa.print("totalFee: " + totalFee + br);
+                            feeSeq = addFee('LIC_RA_01', 'LIC_RENT', 'FINAL', totalFee, "Y", renewCapId);
+                        }
+                        else
+                            aa.print("unable to link the renewed cap to the license" + br);
+                    }
+                    else
+                        aa.print("Unable to create renewal cap" + br);
+                    //End creating renewal record
+                    aa.print('SUCCESS' + br);
+				}
+            } catch (ex) {  //licensse without renewal dates blow up
+                aa.print(recs[idx].capID.getCustomID() + ' has no renewal info' + br);
+            }
+        }
+    }
 		},
+		//Collecting information? Doesn't seem to actually do anything
 		root.RenewalNotice_RL_07=function(){
 			var idx,lic,scriptDate,dte,$iTrc=bs.utils.debug.ifTracer,$utils=bs.utils,beginDate=new Date((new Date).getFullYear(),0,1),recs=[];
 			recs=aa.cap.getByAppType("Licenses","Business","Rental License","License").getOutput();
@@ -420,6 +465,7 @@ var scriptRoot=this,bs=bs||{};
 					}
 					catch(ex){aa.print(ex.message),aa.print(recs[idx].capID.getCustomID()+" has no renewal info")}
 		},
+		//
 		root.RenewalPenalty_RL_08=function(){
 			var idx,lic,scriptDate,dte,feeSeq,licHolderContact,$iTrc=bs.utils.debug.ifTracer,$utils=bs.utils,recs=(new Date((new Date).getFullYear(),0,1),[]),br="<BR />",currentDate=new Date;
 			currentDate.setHours(0,0,0,0),recs=aa.cap.getByAppType("Licenses","Business","Rental License","License").getOutput(),aa.print("Current Date: "+currentDate+br);
@@ -472,9 +518,34 @@ var scriptRoot=this,bs=bs||{};
 			aa.print("dte = "+dte),"Active"==recs[idx].getCapStatus()&&dte<today&&(updateTask("License Status","Inspection Due","Updated via Batch RL_09","","",recs[idx].getCapID()),aa.print("Success"))}
 		}
 	}).call(batch);
+		var proRateApplicationFee_RL01 = root.proRateApplicationFee_RL01 = function () {
+            var $utils = bs.utils,
+				buildings = Number(AInfo['Number of Buildings']),
+                dwellingUnits = Number(AInfo['Number of Dwelling Units']),
+                roomingUnits = Number(AInfo['Number of Rooming Units']),
+				occupUnits = Number(AInfo['Number of Owner Occupied Units or Units Not Available for Rent']),
+                feeMonths, 
+                totalFee = 0,
+				annualFee = 0;
+
+            showDebug = bs.constants.debug;
+            $utils.debug.assert(true,'proRateApplicationFee_RL01() started');
+
+            feeMonths = $utils.date.monthsDiff(new Date(), new Date(new Date().getFullYear() + 1, 0, 1))+1; //including current month in calculation
+            $utils.debug.assert(true, "feeMonths = " + feeMonths);
+			annualFee = ((25 * buildings) + (20 * dwellingUnits) + (10 * roomingUnits)) - (20 * occupUnits)
+            totalFee = (annualFee / 12) * feeMonths;
+            totalFee = parseFloat(totalFee).toFixed(); //removed Fixed nbr to round
+
+            $utils.debug.assert(true, 'adding fee LIC_RA_01: ' + totalFee);
+            feeSeq = addFee('LIC_RA_01', 'LIC_RENT', 'FINAL', totalFee, "Y")
+            $utils.debug.assert(true, 'added fee LIC_RA_01: ' + totalFee);
+
+        };
 	var emse=root.emse={};
 	(function(){
 		var root=this;
+		//Sets Permit issuance fee (if not already set)
 		root.permitIssuanceFee_BLD01=function(){
 			var $iTrc=bs.utils.debug.ifTracer,$utils=bs.utils,feeSeq=null,doesFeeExist=!1,type=appTypeArray[1].toUpperCase();
 			if(showDebug=bs.constants.debug,$utils.debug.assert(!0,"permitIssuanceFee_BLD01() started"),(feeExists("BLD_03","INVOICED","NEW")||feeExists("M_01","INVOICED","NEW")||feeExists("E_01","INVOICED","NEW")||feeExists("P_01","INVOICED","NEW")||feeExists("SL_02","INVOICED","NEW"))&&(doesFeeExist=!0),aa.print(doesFeeExist),$iTrc(isTaskActive("Permit Issuance")&&"Permit Issuance"!=wfTask&&!doesFeeExist,"Active Task = Permit Issuance.....wfTask != Permit Issuance....fee not new or invoiced"))
@@ -490,6 +561,7 @@ var scriptRoot=this,bs=bs||{};
 				case"SOLAR":feeSeq=addFee("SL_02","BLD_SOLAR","FINAL",1,"Y")
 			}
 		},
+		// If Fee Balance == 0, permit cannot be issued (why does this not work on Plumbing?)
 		root.feePaymentVerification_BLD02=function(){
 			var fees,idx,feeItem,$iTrc=bs.utils.debug.ifTracer,$utils=bs.utils,balance=0;
 			if(showDebug=bs.constants.debug,$utils.debug.assert(!0,"feePaymentVerification_BLD02() started"),$iTrc("Permit Issuance"==wfTask&&"Issued"==wfStatus,"Workflow-Task Match")){
@@ -564,8 +636,10 @@ var scriptRoot=this,bs=bs||{};
 					}
 					return fee=void 0!=feeString?parseFloat(feeString):0
 			}
-					var key,$iTrc=bs.utils.debug.ifTracer,$utils=bs.utils,valueOfWorkPermitted=Number(AInfo["Value of Work Permitted"]),fee=calcCommercialFee(),feeObjArr=[];showDebug=bs.constants.debug,$utils.debug.assert(!0,"bldCalcCommercialPermitFee_BLD03() started"),feeObjArr=aa.fee.getFeeItems(capId,null,null).getOutput();
-			for(key in feeObjArr)$iTrc("BLD_01"==feeObjArr[key].getFeeCod().toUpperCase()&&"BLD_BUILDING"==feeObjArr[key].getF4FeeItemModel().getFeeSchudle().toUpperCase(),"Fee = BLD_01... Schedule = BLD_BUILDING")&&updateFee("BLD_01","BLD_BUILDING","FINAL",fee,"N")
+					var key,$iTrc=bs.utils.debug.ifTracer,$utils=bs.utils,valueOfWorkPermitted=Number(AInfo["Value of Work Permitted"]),fee=calcCommercialFee(),feeObjArr=[];
+					showDebug=bs.constants.debug,$utils.debug.assert(!0,"bldCalcCommercialPermitFee_BLD03() started"),feeObjArr=aa.fee.getFeeItems(capId,null,null).getOutput();
+			for(key in feeObjArr)
+				$iTrc("BLD_01"==feeObjArr[key].getFeeCod().toUpperCase()&&"BLD_BUILDING"==feeObjArr[key].getF4FeeItemModel().getFeeSchudle().toUpperCase(),"Fee = BLD_01... Schedule = BLD_BUILDING")&&updateFee("BLD_01","BLD_BUILDING","FINAL",fee,"N")
 		},
 		root.bldCalcResidentialPermitFee_BLD04=function(){
 			function calcResidentialFee(){
@@ -702,14 +776,18 @@ var scriptRoot=this,bs=bs||{};
 			)
 		},
 		root.SchedulePendingForInspApp=function(){scheduleInspection("Pending",0,"admin",null,"Created as placeholder for Inspector App use")},
-		root.proRateApplicationFee_RL01=function(){
-			var feeMonths,$utils=(bs.utils.debug.ifTracer,bs.utils),dwellingUnitFee=20,roomingUnitFee=10,buildingUnitFee=25,dwellingUnits=Number(AInfo["Number of Dwelling Units"]),roomingUnits=Number(AInfo["Number of Rooming Units"]),totalFee=0;
-			showDebug=bs.constants.debug,$utils.debug.assert(!0,"proRateApplicationFee_RL01() started"),feeMonths=$utils.date.monthsDiff(new Date,new Date((new Date).getFullYear()+1,0,1))+1,$utils.debug.assert(!0,"feeMonths = "+feeMonths),totalFee=(buildingUnitFee+dwellingUnitFee*dwellingUnits+roomingUnitFee*roomingUnits)/12*feeMonths,totalFee=parseFloat(totalFee).toFixed(),$utils.debug.assert(!0,"adding fee LIC_RA_01: "+totalFee),feeSeq=addFee("LIC_RA_01","LIC_RENT","FINAL",totalFee,"Y"),$utils.debug.assert(!0,"added fee LIC_RA_01: "+totalFee)
-		},
+		
+		
+		//is run when LIC_RL_01 (Application Fee) is calculated on a new Rental License Application
+
+		
+		//should be run when LIC_RL_01 (Application Fee) is calculated on a renewed Rental License Application
+		// not running tho?
 		root.rentalLicRenFee_RL01=function(){
-			var $utils=(bs.utils.debug.ifTracer,bs.utils),dwellingUnitFee=20,roomingUnitFee=10,buildingUnitFee=25,dwellingUnits=Number(AInfo["Number of Dwelling Units"]),roomingUnits=Number(AInfo["Number of Rooming Units"]),totalFee=0;
-			showDebug=bs.constants.debug,$utils.debug.assert(!0,"rentalLicRenFee_RL01() started"),totalFee=buildingUnitFee+dwellingUnitFee*dwellingUnits+roomingUnitFee*roomingUnits,totalFee=parseFloat(totalFee).toFixed(),$utils.debug.assert(!0,"adding fee LIC_RA_01:: "+totalFee),$utils.debug.assert(!0,"added fee LIC_RA_01: "+totalFee)
+			var $utils=(bs.utils.debug.ifTracer,bs.utils),dwellingUnitFee=20,roomingUnitFee=10,buildingUnitFee=25,dwellingUnits=Number(AInfo["Number of Dwelling Units"]),roomingUnits=Number(AInfo["Number of Rooming Units"]),,buildingUnits=Number(AInfo["Number of Building Units"]),ownerUnits=Number(AInfo["Number of Owner Occupied Units or Units Not Available for Rent"]),totalFee=0;
+			showDebug=bs.constants.debug,$utils.debug.assert(!0,"rentalLicRenFee_RL01() started"),totalFee=(((buildingUnitFee*buildingUnits)+(dwellingUnitFee*dwellingUnits)+(roomingUnitFee*roomingUnits))-(ownerUnits*20)),totalFee=parseFloat(totalFee).toFixed(),$utils.debug.assert(!0,"adding fee LIC_RA_01:: "+totalFee),$utils.debug.assert(!0,"added fee LIC_RA_01: "+totalFee)
 		},
+		
 		root.inspectionFeeAssigned_RL02=function(){
 			var $iTrc=bs.utils.debug.ifTracer,$utils=bs.utils,feeSeq=null,dwellingUnits=Number(AInfo["Number of Dwelling Units"]),roomingUnits=Number(AInfo["Number of Rooming Units"]);
 			showDebug=bs.constants.debug,$utils.debug.assert(!0,"inspectionFeeAssigned_RL02() started"),$utils.debug.assert(!0,"adding fee LIC_RA_02: 1"),feeSeq=addFee("LIC_RA_02","LIC_RENT","FINAL",dwellingUnits,"N"),$iTrc("Yes"!=AInfo["Is this a Dormitory?"],"Is this a Dormitory? != Yes")&&0!=roomingUnits&&($utils.debug.assert(!0,"adding fee LIC_RA_03: 1"),feeSeq=addFee("LIC_RA_03","LIC_RENT","FINAL",roomingUnits,"N"))},
@@ -901,6 +979,7 @@ var scriptRoot=this,bs=bs||{};
 				return!1
 			},
 			overrides=root.overrides={};
+			// Fee Balance
 			(function(){
 				var root=this;
 				root.feeBalance=function(feestr,feeSch,invoicedOnly){
@@ -929,6 +1008,7 @@ var scriptRoot=this,bs=bs||{};
 				}
 			}).call(overrides);
 			var inspection=root.inspection={};
+			// inspections functions
 			(function(){
 				var root=this;
 				root.getInspections=function(capId){
@@ -939,6 +1019,7 @@ var scriptRoot=this,bs=bs||{};
 				}
 			}).call(inspection);
 			var people=root.people={};
+			// get people functions
 			(function(){
 				var root=this;
 				root.getOwners=function(capId){
@@ -953,6 +1034,7 @@ var scriptRoot=this,bs=bs||{};
 			}).call(people)
 		}).call(accela);
 		var date=root.date={};
+		// date functions
 		(function(){
 			var root=this;
 			root.isDate=function(sDate){var dte=new Date(sDate);return"NaN"!=dte.toString()&&"Invalid Date"!=dte.toString()},
@@ -994,6 +1076,7 @@ var scriptRoot=this,bs=bs||{};
 			}
 		}).call(date);
 		var debug=root.debug={};
+		// debugging
 		(function(){
 			var root=this,printObjProps=(root.assert=function(cond,msg){return cond&&logDebug(msg),cond},
 				root.ifTracer=function(cond,msg){return cond=!!cond,logDebug(cond.toString().toUpperCase()+": "+msg),cond},
@@ -1009,7 +1092,8 @@ var scriptRoot=this,bs=bs||{};
 				}
 			);
 			root.printClassDiagram=function(capId){
-				bs.utils;aa.print("----------------> getInspection)");
+				bs.utils;
+				aa.print("----------------> getInspection)");
 				var inspection=aa.inspection.getInspection(capId,8307547).getOutput();
 				aa.print("Inspection: "+inspection),printObjProps(inspection),null!=inspection?printObjProps(inspection.inspectionDate):logDebug("WARNING: There is no inspection")
 			}
