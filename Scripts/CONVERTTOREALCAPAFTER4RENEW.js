@@ -1,11 +1,11 @@
 //ctrca for renewal script
 
 //Set incomleted CAPID (CAP id)  for test.
-//Unit Test Parameters --> begin
+//Unit Test Parameters --&gt; begin
 //aa.env.setValue("PermitId1", "07WEN");
 //aa.env.setValue("PermitId2", "00000");
 //aa.env.setValue("PermitId3", "00005");
-//Unit Test Parameters --> end
+//Unit Test Parameters --&gt; end
 
 var capID = getCapId();
 var partialCapID = getPartialCapID(capID);
@@ -30,8 +30,8 @@ if (result.getSuccess())
 	aa.print("CAP(" + parentLicenseCAPID + ") renewal is complete.");
 }
 aa.env.setValue("ScriptReturnCode", "0"); 
-aa.env.setValue("ScriptReturnMessage", "Running CONVERTTOREALCAPAFTER4RENEW.");
-
+aa.env.setValue("ScriptReturnMessage", "Renewal process.");
+​
 
 function copyKeyInfo(srcCapId, targetCapId)
 {
@@ -67,15 +67,17 @@ function copyKeyInfo(srcCapId, targetCapId)
 
 function copyRenewCapDocument(srcCapId, targetCapId,currentUserID)
 {
-	if(srcCapId != null && targetCapId != null)
+	if(srcCapId != null &amp;&amp; targetCapId != null)
 	{
 		aa.cap.copyRenewCapDocument(srcCapId, targetCapId,currentUserID);
 	}
 }
 
+
+
 function copyEducation(srcCapId, targetCapId)
 {
-	if(srcCapId != null && targetCapId != null)
+	if(srcCapId != null &amp;&amp; targetCapId != null)
 	{
 		aa.education.copyEducationList(srcCapId, targetCapId);
 	}
@@ -83,7 +85,7 @@ function copyEducation(srcCapId, targetCapId)
 
 function copyContEducation(srcCapId, targetCapId)
 {
-	if(srcCapId != null && targetCapId != null)
+	if(srcCapId != null &amp;&amp; targetCapId != null)
 	{
 		aa.continuingEducation.copyContEducationList(srcCapId, targetCapId);
 	}
@@ -91,7 +93,7 @@ function copyContEducation(srcCapId, targetCapId)
 
 function copyExamination(srcCapId, targetCapId)
 {
-	if(srcCapId != null && targetCapId != null)
+	if(srcCapId != null &amp;&amp; targetCapId != null)
 	{
 		aa.examination.copyExaminationList(srcCapId, targetCapId);
 	}
@@ -159,7 +161,7 @@ function copyLicenseProfessional(srcCapId, targetCapId)
 		sourcelicProfModel.setCapID(targetCapId);
 		targetLicProfModel = null;
 		//3.2 Check to see if sourceLicProf exist.
-		if (targetLicenses != null && targetLicenses.length > 0)
+		if (targetLicenses != null &amp;&amp; targetLicenses.length &gt; 0)
 		{
 			for (loop2 in targetLicenses)
 			{
@@ -194,7 +196,7 @@ function isMatchLicenseProfessional(licProfScriptModel1, licProfScriptModel2)
 		return false;
 	}
 	if (licProfScriptModel1.getLicenseType().equals(licProfScriptModel2.getLicenseType())
-		&& licProfScriptModel1.getLicenseNbr().equals(licProfScriptModel2.getLicenseNbr()))
+		&amp;&amp; licProfScriptModel1.getLicenseNbr().equals(licProfScriptModel2.getLicenseNbr()))
 	{
 		return true;
 	}
@@ -241,7 +243,7 @@ function copyAddress(srcCapId, targetCapId)
 		sourceAddressfModel.setCapID(targetCapId);
 		targetAddressfModel = null;
 		//3.2 Check to see if sourceAddress exist.
-		if (targetAddresses != null && targetAddresses.length > 0)
+		if (targetAddresses != null &amp;&amp; targetAddresses.length &gt; 0)
 		{
 			for (loop2 in targetAddresses)
 			{
@@ -278,12 +280,12 @@ function isMatchAddress(addressScriptModel1, addressScriptModel2)
 	}
 	var streetName1 = addressScriptModel1.getStreetName();
 	var streetName2 = addressScriptModel2.getStreetName();
-	if ((streetName1 == null && streetName2 != null) 
-		|| (streetName1 != null && streetName2 == null))
+	if ((streetName1 == null &amp;&amp; streetName2 != null) 
+		|| (streetName1 != null &amp;&amp; streetName2 == null))
 	{
 		return false;
 	}
-	if (streetName1 != null && !streetName1.equals(streetName2))
+	if (streetName1 != null &amp;&amp; !streetName1.equals(streetName2))
 	{
 		return false;
 	}
@@ -388,16 +390,16 @@ function copyParcel(srcCapId, targetCapId)
 	//2. Get parcel with target CAPID.
 	var targetParcels = getParcel(targetCapId);
 	//3. Check to see which parcel is matched in both source and target.
-	for (i = 0; i < copyParcels.size(); i++)
+	for (i = 0; i &lt; copyParcels.size(); i++)
 	{
 		sourceParcelModel = copyParcels.get(i);
 		//3.1 Set target CAPID to source parcel.
 		sourceParcelModel.setCapID(targetCapId);
 		targetParcelModel = null;
 		//3.2 Check to see if sourceParcel exist.
-		if (targetParcels != null && targetParcels.size() > 0)
+		if (targetParcels != null &amp;&amp; targetParcels.size() &gt; 0)
 		{
-			for (j = 0; j < targetParcels.size(); j++)
+			for (j = 0; j &lt; targetParcels.size(); j++)
 			{
 				if (isMatchParcel(sourceParcelModel, targetParcels.get(j)))
 				{
@@ -477,7 +479,7 @@ function copyPeople(srcCapId, targetCapId)
 		sourcePeopleModel.getCapContactModel().setCapID(targetCapId);
 		targetPeopleModel = null;
 		//3.2 Check to see if sourcePeople exist.
-		if (targetPeople != null && targetPeople.length > 0)
+		if (targetPeople != null &amp;&amp; targetPeople.length &gt; 0)
 		{
 			for (loop2 in targetPeople)
 			{
@@ -519,39 +521,39 @@ function isMatchPeople(capContactScriptModel, capContactScriptModel2)
 	var lastName2 = capContactScriptModel2.getCapContactModel().getPeople().getLastName();
 	var fullName1 = capContactScriptModel.getCapContactModel().getPeople().getFullName();
 	var fullName2 = capContactScriptModel2.getCapContactModel().getPeople().getFullName();
-	if ((contactType1 == null && contactType2 != null) 
-		|| (contactType1 != null && contactType2 == null))
+	if ((contactType1 == null &amp;&amp; contactType2 != null) 
+		|| (contactType1 != null &amp;&amp; contactType2 == null))
 	{
 		return false;
 	}
-	if (contactType1 != null && !contactType1.equals(contactType2))
+	if (contactType1 != null &amp;&amp; !contactType1.equals(contactType2))
 	{
 		return false;
 	}
-	if ((firstName1 == null && firstName2 != null) 
-		|| (firstName1 != null && firstName2 == null))
+	if ((firstName1 == null &amp;&amp; firstName2 != null) 
+		|| (firstName1 != null &amp;&amp; firstName2 == null))
 	{
 		return false;
 	}
-	if (firstName1 != null && !firstName1.equals(firstName2))
+	if (firstName1 != null &amp;&amp; !firstName1.equals(firstName2))
 	{
 		return false;
 	}
-	if ((lastName1 == null && lastName2 != null) 
-		|| (lastName1 != null && lastName2 == null))
+	if ((lastName1 == null &amp;&amp; lastName2 != null) 
+		|| (lastName1 != null &amp;&amp; lastName2 == null))
 	{
 		return false;
 	}
-	if (lastName1 != null && !lastName1.equals(lastName2))
+	if (lastName1 != null &amp;&amp; !lastName1.equals(lastName2))
 	{
 		return false;
 	}
-	if ((fullName1 == null && fullName2 != null) 
-		|| (fullName1 != null && fullName2 == null))
+	if ((fullName1 == null &amp;&amp; fullName2 != null) 
+		|| (fullName1 != null &amp;&amp; fullName2 == null))
 	{
 		return false;
 	}
-	if (fullName1 != null && !fullName1.equals(fullName2))
+	if (fullName1 != null &amp;&amp; !fullName1.equals(fullName2))
 	{
 		return false;
 	}
@@ -597,7 +599,7 @@ function copyOwner(srcCapId, targetCapId)
 		sourceOwnerModel.setCapID(targetCapId);
 		targetOwnerModel = null;
 		//3.2 Check to see if sourceOwner exist.
-		if (targetOwners != null && targetOwners.length > 0)
+		if (targetOwners != null &amp;&amp; targetOwners.length &gt; 0)
 		{
 			for (loop2 in targetOwners)
 			{
@@ -633,12 +635,12 @@ function isMatchOwner(ownerScriptModel1, ownerScriptModel2)
 	}
 	var fullName1 = ownerScriptModel1.getOwnerFullName();
 	var fullName2 = ownerScriptModel2.getOwnerFullName();
-	if ((fullName1 == null && fullName2 != null) 
-		|| (fullName1 != null && fullName2 == null))
+	if ((fullName1 == null &amp;&amp; fullName2 != null) 
+		|| (fullName1 != null &amp;&amp; fullName2 == null))
 	{
 		return false;
 	}
-	if (fullName1 != null && !fullName1.equals(fullName2))
+	if (fullName1 != null &amp;&amp; !fullName1.equals(fullName2))
 	{
 		return false;
 	}
@@ -683,7 +685,7 @@ function copyCapCondition(srcCapId, targetCapId)
 		sourceCapCondition.setCapID(targetCapId);
 		targetCapCondition = null;
 		//3.2 Check to see if source Cap condition exist in target CAP. 
-		if (targetCapConditions != null && targetCapConditions.length > 0)
+		if (targetCapConditions != null &amp;&amp; targetCapConditions.length &gt; 0)
 		{
 			for (loop2 in targetCapConditions)
 			{
@@ -719,23 +721,23 @@ function isMatchCapCondition(capConditionScriptModel1, capConditionScriptModel2)
 	}
 	var description1 = capConditionScriptModel1.getConditionDescription();
 	var description2 = capConditionScriptModel2.getConditionDescription();
-	if ((description1 == null && description2 != null) 
-		|| (description1 != null && description2 == null))
+	if ((description1 == null &amp;&amp; description2 != null) 
+		|| (description1 != null &amp;&amp; description2 == null))
 	{
 		return false;
 	}
-	if (description1 != null && !description1.equals(description2))
+	if (description1 != null &amp;&amp; !description1.equals(description2))
 	{
 		return false;
 	}
 	var conGroup1 = capConditionScriptModel1.getConditionGroup();
 	var conGroup2 = capConditionScriptModel2.getConditionGroup();
-	if ((conGroup1 == null && conGroup2 != null) 
-		|| (conGroup1 != null && conGroup2 == null))
+	if ((conGroup1 == null &amp;&amp; conGroup2 != null) 
+		|| (conGroup1 != null &amp;&amp; conGroup2 == null))
 	{
 		return false;
 	}
-	if (conGroup1 != null && !conGroup1.equals(conGroup2))
+	if (conGroup1 != null &amp;&amp; !conGroup1.equals(conGroup2))
 	{
 		return false;
 	}
@@ -806,7 +808,7 @@ function getAdditionalInfo(capId)
 	return bvaluatnScriptModel;
 }
 
-function  (capId)
+function getCapDetailByID(capId)
 {
 	capDetailScriptModel = null;
 	var s_result = aa.cap.getCapDetail(capId);

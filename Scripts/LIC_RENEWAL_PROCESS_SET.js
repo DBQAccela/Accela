@@ -24,7 +24,6 @@ else
 {
 	logDebug("Error: Could not find set by PK: " + mySetID);
 }
-added this comment to test commit to github
 */
 var debug = "";	
 var br = "<BR>";

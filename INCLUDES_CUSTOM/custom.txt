@@ -356,106 +356,103 @@ var scriptRoot=this,bs=bs||{};
 		// Byrne's Rental License Renewal, Step 1, run from a batch script
 		// Compiles records within specified expiration range into recs[] 
 		root.RenewalRecord_RL_06=function(){
-				
-		var idx,
-			lic,
-			recs = [],
-			scriptDate,
-			dte,
-			br = "<BR />";							// Break Tag;
-		
-		var emptyGISArray = [];
-		var emptyCm1 = aa.cap.getCapModel().getOutput();
-		var emptyCt1 = emptyCm1.getCapType();
-		emptyCt1.setGroup("Licenses");
-		emptyCt1.setType("Business");
-		emptyCt1.setSubType("Rental License");
-		emptyCt1.setCategory("License");
-		emptyCm1.setCapType(emptyCt1);
-		emptyCm1.setCapStatus("Active");
-		var capModel = emptyCm1;
-		
-		var recsResult = aa.cap.getCapListByCollection(capModel, null, null, null, null, null, emptyGISArray);
-		
-		if(recsResult.getSuccess()) recs = recsResult.getOutput();
-		else aa.print("Unable to get licenses err: " + recsResult.getErrorMessage() + br);
-		
-		var newExpDate = new Date(new Date().getFullYear() + 1, 0, 1);
-		var newExpDateString = newExpDate.getMonth()+1 + '/' + newExpDate.getDate() + '/' + newExpDate.getFullYear();
-		var expAADate = aa.date.parseDate(newExpDateString);
-		
-		for (var idx in recs) {
 			
-			lic = aa.expiration.getLicensesByCapID(recs[idx].capID).getOutput();
-			
-			if (lic) {
-				
-				try {
-					if (lic.getExpDate()) {
-						scriptDate = lic.getExpDate();
-						dte = new Date(scriptDate.getMonth() + "/" + scriptDate.getDayOfMonth() + "/" + scriptDate.getYear());
-						aa.print("Record - " + recs[idx].capID.getCustomID() + '---- Exp date - ' + dte + br);
+    var idx,
+        lic,
+        recs = [],
+        scriptDate,
+        dte,
+        br = "<BR />";							// Break Tag;
+    
+    var emptyGISArray = [];
+	var emptyCm1 = aa.cap.getCapModel().getOutput();
+    var emptyCt1 = emptyCm1.getCapType();
+    emptyCt1.setGroup("Licenses");
+    emptyCt1.setType("Business");
+    emptyCt1.setSubType("Rental License");
+    emptyCt1.setCategory("License");
+    emptyCm1.setCapType(emptyCt1);
+    emptyCm1.setCapStatus("Active");
+    var capModel = emptyCm1;
+	
+    var recsResult = aa.cap.getCapListByCollection(capModel, null, null, null, null, null, emptyGISArray);
+	
+	if(recsResult.getSuccess()) recs = recsResult.getOutput();
+    else aa.print("Unable to get licenses err: " + recsResult.getErrorMessage() + br);
+	
+	var newExpDate = new Date(new Date().getFullYear() + 1, 0, 1);
+    var newExpDateString = newExpDate.getMonth()+1 + '/' + newExpDate.getDate() + '/' + newExpDate.getFullYear();
+	var expAADate = aa.date.parseDate(newExpDateString);
+	
+    for (var idx in recs) {
+        lic = aa.expiration.getLicensesByCapID(recs[idx].capID).getOutput();
 
-						//if(recs[idx].capID.getCustomID() != 'RL18-0010') continue;
-						//if(idx < 100) continue;
-						aa.print('passed all tests' + br);
-						lic.setExpStatus("About to Expire");
-						lic.setExpDate(expAADate);
-						aa.expiration.editB1Expiration(lic.getB1Expiration());
-						aa.print('going to update task' + br);
-						aa.print("recs[idx].capID: " + recs[idx].capID + br);
-						updateTask("License Status", "About to Expire", "Updated via Batch RL_06", "", "", recs[idx].capID);
-						
-						// add renewal record
-						aa.print('Calling code for renewal' + br);
-						//First we create a Rental License Renewal
-						renewCapId = createCap("Licenses/Business/Rental License/Renewal", "Rental License Renewal");
-						
-						//If created Successfully
-						if (renewCapId) {
-							//Then we associate the created record to the license
-							renewLinkResult = aa.cap.createRenewalCap(recs[idx].capID, renewCapId, false);
+        if (lic) {
+            try {
+                if (lic.getExpDate()) {
+                    scriptDate = lic.getExpDate();
+                    dte = new Date(scriptDate.getMonth() + "/" + scriptDate.getDayOfMonth() + "/" + scriptDate.getYear());
+                    aa.print("Record - " + recs[idx].capID.getCustomID() + '---- Exp date - ' + dte + br);
+
+					//if(recs[idx].capID.getCustomID() != 'RL18-0010') continue;
+                    aa.print('passed all tests' + br);
+                    lic.setExpStatus("About to Expire");
+					lic.setExpDate(expAADate);
+                    aa.expiration.editB1Expiration(lic.getB1Expiration());
+                    aa.print('going to update task' + br);
+                    aa.print("recs[idx].capID: " + recs[idx].capID + br);
+                    updateTask("License Status", "About to Expire", "Updated via Batch RL_06", "", "", recs[idx].capID);
+                    
+                    // add renewal record
+                    aa.print('Calling code for renewal' + br);
+                    //First we create a Rental License Renewal
+                    renewCapId = createCap("Licenses/Business/Rental License/Renewal", "Rental License Renewal");
+                    
+                    //If created Successfully
+                    if (renewCapId) {
+                        //Then we associate the created record to the license
+                        renewLinkResult = aa.cap.createRenewalCap(recs[idx].capID, renewCapId, false);
+                        
+                        if (renewLinkResult) {
+                            aa.print("Yes, created the complete renewal: " + renewCapId.getCustomID() + br);
+                            //Since the renewal was not creating using the createRenewalRecord we need to copy ASI and ASITs from License to Renewal
+                            copyASIFields(recs[idx].capID, renewCapId);
+                            copyASITables(recs[idx].capID, renewCapId);
+                            copyAddresses(recs[idx].capID, renewCapId);
+                            copyContacts(recs[idx].capID, renewCapId);
+                            copyOwner(recs[idx].capID, renewCapId);
+                            copyParcels(recs[idx].capID, renewCapId);
+                    
+                            //Adding the fee manually for some reason it is not working here when calling function above
+                            // and don't want to break the function since it's working for other records
+                            var AInfo = new Array(); // Create array for tokenized variables
+                            loadAppSpecific(AInfo, renewCapId); // Add AppSpecific Info
+                    
+                            var buildings = Number(AInfo['Number of Buildings']),
+                            dwellingUnits = Number(AInfo['Number of Dwelling Units']),
+                            roomingUnits = Number(AInfo['Number of Rooming Units']),
+							occupUnits = Number(AInfo['Number of Owner Occupied Units or Units Not Available for Rent']),
+                            totalFee = 0;
 							
-							if (renewLinkResult) {
-								aa.print("Yes, created the complete renewal: " + renewCapId.getCustomID() + br);
-								//Since the renewal was not creating using the createRenewalRecord we need to copy ASI and ASITs from License to Renewal
-								copyASIFields(recs[idx].capID, renewCapId);
-								copyASITables(recs[idx].capID, renewCapId);
-								copyAddresses(recs[idx].capID, renewCapId);
-								copyContacts(recs[idx].capID, renewCapId);
-								copyOwner(recs[idx].capID, renewCapId);
-								copyParcels(recs[idx].capID, renewCapId);
-						
-								//Adding the fee manually for some reason it is not working here when calling function above
-								// and don't want to break the function since it's working for other records
-								var AInfo = new Array(); // Create array for tokenized variables
-								loadAppSpecific(AInfo, renewCapId); // Add AppSpecific Info
-						
-								var buildings = Number(AInfo['Number of Buildings']),
-								dwellingUnits = Number(AInfo['Number of Dwelling Units']),
-								roomingUnits = Number(AInfo['Number of Rooming Units']),
-								occupUnits = Number(AInfo['Number of Owner Occupied Units or Units Not Available for Rent']),
-								totalFee = 0;
-								
-								totalFee = ((25 * buildings) + (20 * dwellingUnits) + (10 * roomingUnits)) - (20 * occupUnits);
-								totalFee = parseFloat(totalFee).toFixed(); //removed Fixed nbr to round
-						
-								aa.print("totalFee: " + totalFee + br);
-								feeSeq = addFee('LIC_RA_01', 'LIC_RENT', 'FINAL', totalFee, "Y", renewCapId);
-							}
-							else
-								aa.print("unable to link the renewed cap to the license" + br);
-						}
-						else
-							aa.print("Unable to create renewal cap" + br);
-						//End creating renewal record
-						aa.print('SUCCESS' + br);
-					}
-				} catch (ex) {  //licensse without renewal dates blow up
-					aa.print(recs[idx].capID.getCustomID() + ' has no renewal info' + br);
+                            totalFee = ((25 * buildings) + (20 * dwellingUnits) + (10 * roomingUnits)) - (20 * occupUnits);
+                            totalFee = parseFloat(totalFee).toFixed(); //removed Fixed nbr to round
+                    
+                            aa.print("totalFee: " + totalFee + br);
+                            feeSeq = addFee('LIC_RA_01', 'LIC_RENT', 'FINAL', totalFee, "Y", renewCapId);
+                        }
+                        else
+                            aa.print("unable to link the renewed cap to the license" + br);
+                    }
+                    else
+                        aa.print("Unable to create renewal cap" + br);
+                    //End creating renewal record
+                    aa.print('SUCCESS' + br);
 				}
-			}
-		}
+            } catch (ex) {  //licensse without renewal dates blow up
+                aa.print(recs[idx].capID.getCustomID() + ' has no renewal info' + br);
+            }
+        }
+    }
 		},
 		//Collecting information? Doesn't seem to actually do anything
 		root.RenewalNotice_RL_07=function(){
@@ -759,7 +756,7 @@ var scriptRoot=this,bs=bs||{};
 		
 		
 		//is run when LIC_RL_01 (Application Fee) is calculated on a new Rental License Application
-		root.proRateApplicationFee_RL01 = function () {
+root.proRateApplicationFee_RL01 = function () {
             var $utils = bs.utils,
 				buildings = Number(AInfo['Number of Buildings']),
                 dwellingUnits = Number(AInfo['Number of Dwelling Units']),
@@ -785,26 +782,10 @@ var scriptRoot=this,bs=bs||{};
         },
 		
 		//should be run when LIC_RL_01 (Application Fee) is calculated on a renewed Rental License Application
-
+		// not running tho?
 		root.rentalLicRenFee_RL01=function(){
-			var $utils=(bs.utils.debug.ifTracer,bs.utils),
-			dwellingUnitFee=20,
-			roomingUnitFee=10,
-			buildingUnitFee=25,
-			
-			dwellingUnits=Number(AInfo["Number of Dwelling Units"]),
-			roomingUnits=Number(AInfo["Number of Rooming Units"]),
-			buildingUnits=Number(AInfo["Number of Building Units"]),
-			ownerUnits=Number(AInfo["Number of Owner Occupied Units or Units Not Available for Rent"]),
-			totalFee=0;
-			
-			showDebug=bs.constants.debug,
-			$utils.debug.assert(!0,"rentalLicRenFee_RL01() started"),
-			
-			totalFee=(((buildingUnitFee*buildingUnits)+(dwellingUnitFee*dwellingUnits)+(roomingUnitFee*roomingUnits))-(ownerUnits*20)),
-			totalFee=parseFloat(totalFee).toFixed(),
-			$utils.debug.assert(!0,"adding fee LIC_RA_01:: "+totalFee),
-			$utils.debug.assert(!0,"added fee LIC_RA_01: "+totalFee)
+			var $utils=(bs.utils.debug.ifTracer,bs.utils),dwellingUnitFee=20,roomingUnitFee=10,buildingUnitFee=25,dwellingUnits=Number(AInfo["Number of Dwelling Units"]),roomingUnits=Number(AInfo["Number of Rooming Units"]),,buildingUnits=Number(AInfo["Number of Building Units"]),ownerUnits=Number(AInfo["Number of Owner Occupied Units or Units Not Available for Rent"]),totalFee=0;
+			showDebug=bs.constants.debug,$utils.debug.assert(!0,"rentalLicRenFee_RL01() started"),totalFee=(((buildingUnitFee*buildingUnits)+(dwellingUnitFee*dwellingUnits)+(roomingUnitFee*roomingUnits))-(ownerUnits*20)),totalFee=parseFloat(totalFee).toFixed(),$utils.debug.assert(!0,"adding fee LIC_RA_01:: "+totalFee),$utils.debug.assert(!0,"added fee LIC_RA_01: "+totalFee)
 		},
 		
 		root.inspectionFeeAssigned_RL02=function(){
